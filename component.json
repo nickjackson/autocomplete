@@ -1,0 +1,16 @@
+{
+  "name": "autocomplete",
+  "repo": "nickjackson/autocomplete",
+  "description": "",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "component/emitter": "*"
+  },
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ],
+  "styles": []
+}

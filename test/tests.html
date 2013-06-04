@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <title>Testing AutoComplete</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="mocha.css" />
+    <link rel="stylesheet" href="../build/build.css" />
+    <style>
+      #mocha {
+        margin-top:100px;
+      }
+      .autocomplete {
+        float:left;
+        position:relative;
+      }
+
+      .autocomplete .query {
+        padding:5px;
+        font-size:14px;
+        border:1px solid #BFBFBF;
+        outline:none;
+        margin:0px;
+        width:400px;
+      }
+
+      .autocomplete .query:hover {
+        background-color:#F3F3F3;
+      }
+      
+      .autocomplete .results {
+        z-index: 5;
+        position: absolute;
+      }
+
+      .autocomplete .results ul{
+        margin:0px;
+        padding:0px;
+        list-style:none;
+        top: 33px;
+        box-shadow: 0px 1px 5px #6C6C6C;
+        width:400px;
+        background-color:white;
+      }
+
+      .autocomplete .results li{
+        padding:5px 10px;
+        font-size:13px;
+        color:#7F7F7F;
+        text-decoration:none;
+        display:block;
+      }
+
+      .autocomplete .results li.selected {
+        color:#9AB33A;
+        background-color:#F2F2F2;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="one" class="autocomplete">
+      <input type="text" class="query"></input>
+      <div class="results"></div>
+    </div>
+    <div id="mocha"></div>
+    <script src="../build/build.js"></script>
+    <script src="mocha.js"></script>
+    <script src="expect.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="autocomplete.js"></script>
+    <script>
+      mocha.run();
+      var AutoComplete = require('autocomplete')
+        , one = document.querySelector('#one .query')
+        , two = document.querySelector('#one div')
+
+      function result(result){
+        return result.name || '';
+      }
+
+      AutoComplete(one)
+      .on('template', function(data, query, fn){
+        fn(data.name)
+      })
+      .on('query', function(query, fn){
+        if (query == '') {
+          two.innerHTML = '';
+          return;
+        }
+        fn([{name:'foo'}, {name:'bar'}, {name:'gah'}])
+      })
+      .on('rendered', function(dom){
+        two.innerHTML = '';
+        two.appendChild(dom);
+      })
+      .on('selected', function(item){
+        var query = this.query
+          , results = query.results;
+
+        query.selected = null;
+        results.forEach(function(result){
+          result.el.className = '';
+        });
+
+        if (item) {
+          query.selected = item;
+          item.el.className = 'selected';
+        }
+      })
+      .on('escape', function(){
+        two.innerHTML = '';
+        this.query = '';
+      })
+      .on('enter', function(){
+        console.log(this.query.selected);
+      })
+
+    </script>
+  </body>
+</html>
